@@ -1,31 +1,13 @@
-import {Link} from "react-router-dom";
-import React, {useState} from "react";
-// import {chakra, Container, Grid, List, Table, Tbody, Td, Th, Thead, Tr} from "@chakra-ui/react";
-// import patientsTable from "./PatientsTable"
-import {Table, Thead, Tbody, Tr, Th, Td, chakra} from '@chakra-ui/react'
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
-import { useTable, useSortBy } from 'react-table'
+import React, {useEffect, useMemo, useState} from "react";
+import { useTable } from 'react-table'
 import axios from "axios";
 import styled from 'styled-components'
 
-function Header(props) {
-    return null;
-}
+
+
 
 export default function Patients() {
-    const [states, setstate] = useState([]);
     const url = "http://localhost:9000/patients/?doctorId=" + localStorage.getItem("doctorId")
-    let table = [];
-
-    function setTable(data) {
-        table = data
-        console.log("table")
-        console.log(table)
-    }
-
-    axios.get(url).then(response =>
-        setTable(response.data)
-    )
 
     const Styles = styled.div`
   padding: 1rem;
@@ -55,7 +37,6 @@ export default function Patients() {
     }
     `
 
-
     function Table({ columns, data }) {
         // Use the state and functions returned from useTable to build your UI
         const {
@@ -82,7 +63,7 @@ export default function Patients() {
                 ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                {rows.map((row, i) => {
+                {rows.map((row) => {
                     prepareRow(row)
                     return (
                         <tr {...row.getRowProps()}>
@@ -97,7 +78,9 @@ export default function Patients() {
         )
     }
 
-    const columns = React.useMemo(
+    const [loadingData, setLoadingData] = useState(true);
+
+    const columns = useMemo(
         () => [
             {
                 Header: 'List of smokers',
@@ -119,25 +102,39 @@ export default function Patients() {
         ], []
     )
 
+    const [data, setData] = useState([]);
 
-                return (
+    useEffect(() => {
+        async function getData() {
+            await axios
+                .get(url)
+                .then((response) => {
+                    // check if the data is populated
+                    console.log(response.data);
+                    setData(response.data);
+                    // you tell it that you had the result
+                    setLoadingData(false);
+                });
+        }
+        if (loadingData) {
+            // if the result is not ready so you make the axios call
+            getData();
+        }
+    }, [loadingData, url]);
+
+
+    // TODO: add links to row to this smoker
+    return (
         <main style={{ padding: "1rem 0" }}>
             <div>
                 <h2>Patients:</h2>
-                {/*<table border={2} cellPadding={5}>*/}
-                {/*    <thead>*/}
-                {/*    <tr>*/}
-                {/*        <td>First name</td>*/}
-                {/*        <td>Last name</td>*/}
-                {/*        <td>Number of accidents</td>*/}
-                {/*    </tr>*/}
-                {/*    </thead>*/}
-                {/*    <tbody>*/}
-                {/*    </tbody>*/}
-                {/*</table>*/}
-                <Styles>
-                    <Table columns={columns} data={table} />
-                </Styles>
+                {loadingData ? (
+                    <p>Loading Please wait...</p>
+                ) : (
+                    <Styles>
+                        <Table columns={columns} data={data} />
+                    </Styles>
+                )}
             </div>
         </main>
     );
