@@ -3,6 +3,8 @@ import { useTable } from 'react-table'
 import axios from "axios";
 import styled from 'styled-components'
 
+import {ObservationForm} from './ObservationForm'
+
 
 
 
@@ -10,6 +12,7 @@ export default function Smoker() {
     const smokerURL = "http://localhost:9000/smoker/?smokerId=" + localStorage.getItem("smokerId")
     const relativesURL = "http://localhost:9000/relatives/?smokerId=" + localStorage.getItem("smokerId")
     const punishmentsURL = "http://localhost:9000/punishments/?smokerId=" + localStorage.getItem("smokerId")
+    const observationURL = "http://localhost:9000/observation/?smokerId=" + localStorage.getItem("smokerId")
 
     const Styles = styled.div`
   padding: 1rem;
@@ -51,7 +54,6 @@ export default function Smoker() {
             columns,
             data,
         })
-        console.log("data inside Table", data)
         // Render the UI for your table
         return (
             <table {...getTableProps()}>
@@ -83,6 +85,7 @@ export default function Smoker() {
     const [loadingSmokerData, setLoadingSmokerData] = useState(true);
     const [loadingPunishmentsData, setLoadingPunishmentsData] = useState(true);
     const [loadingRelativesData, setLoadingRelativesData] = useState(true);
+    const [loadingObservationData, setLoadingObservationData] = useState(true);
 
     const punishmentColumns = useMemo(
         () => [
@@ -128,9 +131,32 @@ export default function Smoker() {
         ], []
     )
 
+    const observationColumns = useMemo(
+        () => [
+            {
+                Header: 'Observation schedule',
+                columns: [
+                    {
+                        Header: 'Start',
+                        accessor: 'start',
+                    },
+                    {
+                        Header: 'Finish',
+                        accessor: 'finish',
+                    },
+                    {
+                        Header: 'Hours per day',
+                        accessor: 'hoursPerDay',
+                    },
+                ]
+            }
+        ], []
+    )
+
     const [smokerData, setSmokerData] = useState([]);
     const [punishmentsData, setPunishmentsData] = useState([]);
     const [relativesData, setRelativesData] = useState([]);
+    const [observationData, setObservationData] = useState([]);
 
     useEffect(() => {
         async function getSmokerData() {
@@ -166,9 +192,21 @@ export default function Smoker() {
                     setLoadingRelativesData(false);
                 });
         }
+        async function getObservationData() {
+            await axios
+                .get(observationURL)
+                .then((response) => {
+                    // check if the data is populated
+                    console.log('Observation', response.data);
+                    setObservationData(response.data);
+                    // you tell it that you had the result
+                    setLoadingObservationData(false);
+                });
+        }
         if (loadingSmokerData) getSmokerData();
         if (loadingRelativesData) getRelativesData();
         if (loadingPunishmentsData) getPunishmentsData();
+        if (loadingObservationData) getObservationData();
     }, []);
 
 
@@ -177,25 +215,36 @@ export default function Smoker() {
         <main style={{ padding: "1rem 0" }}>
             <div>
                 {loadingSmokerData ? (
-                    <h2>Patient: Loading Please wait...</h2>
+                    <h2>Patient: Loading information please wait...</h2>
                 ) : (
                     <div>
-                        <h2>Patient: {smokerData.firstName} {smokerData.lastName} </h2>
+                        <h2>{smokerData.firstName} {smokerData.lastName} </h2>
                         <h3>Number of accidents: {smokerData.numberOfAccidents}</h3>
                     </div>
                 )}
-                {loadingRelativesData ? (
-                    <p>Loading Relatives Please wait...</p>
+
+                {loadingObservationData ? (
+                    <p>Loading Observation schedule information please wait...</p>
                 ) : (
                     <Styles>
-                        <Table columns={relativesColumns} data={relativesData} />
+                        <Table columns={observationColumns} data={observationData} />
+                        <ObservationForm/>
                     </Styles>
                 )}
+
                 {loadingPunishmentsData ? (
-                    <p>Loading Punishments Please wait...</p>
+                    <p>Loading Punishments information please wait...</p>
                 ) : (
                     <Styles>
                         <Table columns={punishmentColumns} data={punishmentsData} />
+                    </Styles>
+                )}
+
+                {loadingRelativesData ? (
+                    <p>Loading Relatives information please wait...</p>
+                ) : (
+                    <Styles>
+                        <Table columns={relativesColumns} data={relativesData} />
                     </Styles>
                 )}
             </div>

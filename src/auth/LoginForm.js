@@ -12,8 +12,6 @@ import {
 import * as React from 'react'
 import {useState} from "react";
 import {HiEye, HiEyeOff} from "react-icons/hi";
-import ReactRouterDOM from "react-dom";
-import { Navigate, Routes, Route  } from "react-router";
 
 
 
@@ -23,7 +21,6 @@ export const LoginForm = (props) => {
     const { isOpen, onToggle } = useDisclosure()
     const inputRef = React.useRef(null)
     const axios = require('axios')
-    // const Redirect = ReactRouterDOM.Redirect;
 
 
     const setLogin = (event) => {
