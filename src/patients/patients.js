@@ -85,6 +85,10 @@ export default function Patients() {
             {
                 Header: 'List of smokers',
                 columns: [
+                    // {
+                    //     Header: 'Id',
+                    //     accessor: 'id',
+                    // },
                     {
                         Header: 'First Name',
                         accessor: 'firstName',
