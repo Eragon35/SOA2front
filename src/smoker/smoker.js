@@ -217,10 +217,12 @@ export default function Smoker() {
                 {loadingSmokerData ? (
                     <h2>Patient: Loading information please wait...</h2>
                 ) : (
-                    <div>
-                        <h2>{smokerData.firstName} {smokerData.lastName} </h2>
-                        <h3>Number of accidents: {smokerData.numberOfAccidents}</h3>
-                    </div>
+                    <Styles>
+                        <div>
+                            <h2>{smokerData.firstName} {smokerData.lastName} </h2>
+                            <h3>Number of accidents: {smokerData.numberOfAccidents}</h3>
+                        </div>
+                    </Styles>
                 )}
 
                 {loadingObservationData ? (
