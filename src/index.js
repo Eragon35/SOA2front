@@ -19,7 +19,7 @@ render(
             <Route path="/" element={<App />} />
             <Route path="auth" element={<Auth />} />
             <Route path="patients" element={<Patients />} />
-            <Route path="smoker*" element={<Smoker />} />
+            <Route path="patient" element={<Smoker />} />
         </Routes>
     </BrowserRouter>,
     rootElement

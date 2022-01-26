@@ -2,6 +2,8 @@ import React, {useEffect, useMemo, useState} from "react";
 import { useTable } from 'react-table'
 import axios from "axios";
 import styled from 'styled-components'
+import Select from 'react-select'
+
 
 import {ObservationForm} from './ObservationForm'
 
@@ -11,7 +13,7 @@ import {ObservationForm} from './ObservationForm'
 export default function Smoker() {
     const smokerURL = "http://localhost:9000/smoker/?smokerId=" + localStorage.getItem("smokerId")
     const relativesURL = "http://localhost:9000/relatives/?smokerId=" + localStorage.getItem("smokerId")
-    const punishmentsURL = "http://localhost:9000/punishments/?smokerId=" + localStorage.getItem("smokerId")
+    const punishmentsURL = "http://localhost:9000/punishment/?smokerId=" + localStorage.getItem("smokerId")
     const observationURL = "http://localhost:9000/observation/?smokerId=" + localStorage.getItem("smokerId")
 
     const Styles = styled.div`
@@ -188,6 +190,7 @@ export default function Smoker() {
                     // check if the data is populated
                     console.log('Relatives', response.data);
                     setRelativesData(response.data);
+                    setRealativesOptions(response.data)
                     // you tell it that you had the result
                     setLoadingRelativesData(false);
                 });
@@ -208,6 +211,18 @@ export default function Smoker() {
         if (loadingPunishmentsData) getPunishmentsData();
         if (loadingObservationData) getObservationData();
     }, []);
+
+    const relativesOptions = [
+        { value: 'chocolate', label: 'Chocolate' },
+        { value: 'strawberry', label: 'Strawberry' },
+        { value: 'vanilla', label: 'Vanilla' }
+    ]
+
+    function setRealativesOptions(data) {
+        data.forEach(x => relativesOptions.push(x.id, x.firstName + x.lastName))
+    }
+
+
 
 
     // TODO: add links to row to this smoker
@@ -239,6 +254,7 @@ export default function Smoker() {
                 ) : (
                     <Styles>
                         <Table columns={punishmentColumns} data={punishmentsData} />
+                        <Select options={relativesOptions} />
                     </Styles>
                 )}
 

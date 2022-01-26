@@ -41,7 +41,7 @@ export const ObservationForm = (props) => {
 
         // console.log(data, 'data')
 
-        axios.post("http://localhost:9000/addobservation", data).then(response => {
+        axios.post("http://localhost:9000/observation", data).then(response => {
             console.log(response)
             // TODO: add record that request was send and refresh punishment table
         })
@@ -59,12 +59,12 @@ export const ObservationForm = (props) => {
             <Stack spacing="6">
                 <FormControl id="start">
                     <FormLabel>Начало слежки</FormLabel>
-                    <Input name="start" type="text" required  value={start} onChange={setObservationStart}/>
+                    <Input name="start" type="date" required  value={start} onChange={setObservationStart}/>
                 </FormControl>
 
                 <FormControl id="finish">
                     <FormLabel>Конец слежки</FormLabel>
-                    <Input name="finish" type="text" required  value={finish} onChange={setObservationFinish}/>
+                    <Input name="finish" type="date" required  value={finish} onChange={setObservationFinish}/>
                 </FormControl>
 
                 <FormControl id="hoursPerDay">
