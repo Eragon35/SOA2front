@@ -6,6 +6,7 @@ import Select from 'react-select'
 
 
 import {ObservationForm} from './ObservationForm'
+import {WeighingForm} from "./WeighingForm";
 
 
 
@@ -15,6 +16,7 @@ export default function Smoker() {
     const relativesURL = "http://localhost:9000/relatives/?smokerId=" + localStorage.getItem("smokerId")
     const punishmentsURL = "http://localhost:9000/punishment/?smokerId=" + localStorage.getItem("smokerId")
     const observationURL = "http://localhost:9000/observation/?smokerId=" + localStorage.getItem("smokerId")
+    const weighingURL = "http://localhost:9000/weighing/?smokerId=" + localStorage.getItem("smokerId")
 
     const Styles = styled.div`
   padding: 1rem;
@@ -88,6 +90,7 @@ export default function Smoker() {
     const [loadingPunishmentsData, setLoadingPunishmentsData] = useState(true);
     const [loadingRelativesData, setLoadingRelativesData] = useState(true);
     const [loadingObservationData, setLoadingObservationData] = useState(true);
+    const [loadingWeighingData, setLoadingWeighingData] = useState(true);
 
     const punishmentColumns = useMemo(
         () => [
@@ -155,10 +158,29 @@ export default function Smoker() {
         ], []
     )
 
+    const weighingColumns = useMemo(
+        () => [
+            {
+                Header: 'Взвешивания',
+                columns: [
+                    {
+                        Header: 'Дата',
+                        accessor: 'date',
+                    },
+                    {
+                        Header: 'Вес',
+                        accessor: 'weight',
+                    },
+                ]
+            }
+        ], []
+    )
+
     const [smokerData, setSmokerData] = useState([]);
     const [punishmentsData, setPunishmentsData] = useState([]);
     const [relativesData, setRelativesData] = useState([]);
     const [observationData, setObservationData] = useState([]);
+    const [weighingData, setWeighingData] = useState([]);
 
     useEffect(() => {
         async function getSmokerData() {
@@ -206,10 +228,22 @@ export default function Smoker() {
                     setLoadingObservationData(false);
                 });
         }
+        async function getWeighinhData() {
+            await axios
+                .get(weighingURL)
+                .then((response) => {
+                    // check if the data is populated
+                    console.log('Weighinhg', response.data);
+                    setWeighingData(response.data);
+                    // you tell it that you had the result
+                    setLoadingWeighingData(false);
+                });
+        }
         if (loadingSmokerData) getSmokerData();
         if (loadingRelativesData) getRelativesData();
         if (loadingPunishmentsData) getPunishmentsData();
         if (loadingObservationData) getObservationData();
+        if (loadingWeighingData) getWeighinhData();
     }, []);
 
     const relativesOptions = [
@@ -264,6 +298,17 @@ export default function Smoker() {
                     <Styles>
                         <Table columns={relativesColumns} data={relativesData} />
                     </Styles>
+
+                )}
+
+                {loadingWeighingData ? (
+                    <p>Loading Weighings information please wait...</p>
+                ) : (
+                    <Styles>
+                        <Table columns={weighingColumns} data={weighingData} />
+                        <WeighingForm/>
+                    </Styles>
+
                 )}
             </div>
         </main>
