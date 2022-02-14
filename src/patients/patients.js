@@ -2,6 +2,7 @@ import React, {useEffect, useMemo, useState} from "react";
 import { useTable } from 'react-table'
 import axios from "axios";
 import styled from 'styled-components'
+import {NavLink} from "react-router-dom";
 
 
 
@@ -49,7 +50,6 @@ export default function Patients() {
             columns,
             data,
         })
-        console.log("data inside Table", data)
         // Render the UI for your table
         return (
             <table {...getTableProps()}>
@@ -68,7 +68,12 @@ export default function Patients() {
                     return (
                         <tr {...row.getRowProps()}>
                             {row.cells.map(cell => {
-                                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                return <td {...cell.getCellProps()}>
+                                    <NavLink to={`/patient/` }>
+                                        {console.log(cell.getCellProps())}
+                                        {cell.render('Cell')}
+                                    </NavLink>
+                                </td>
                             })}
                         </tr>
                     )
@@ -85,10 +90,10 @@ export default function Patients() {
             {
                 Header: 'List of smokers',
                 columns: [
-                    // {
-                    //     Header: 'Id',
-                    //     accessor: 'id',
-                    // },
+                    {
+                        Header: 'Id',
+                        accessor: 'id',
+                    },
                     {
                         Header: 'First Name',
                         accessor: 'firstName',
@@ -114,6 +119,7 @@ export default function Patients() {
                 .get(url)
                 .then((response) => {
                     // check if the data is populated
+                    console.log('data is');
                     console.log(response.data);
                     setData(response.data);
                     // you tell it that you had the result
