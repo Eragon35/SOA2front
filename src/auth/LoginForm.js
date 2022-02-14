@@ -12,6 +12,7 @@ import {
 import * as React from 'react'
 import {useState} from "react";
 import {HiEye, HiEyeOff} from "react-icons/hi";
+import {useNavigate} from "react-router";
 
 
 
@@ -21,6 +22,7 @@ export const LoginForm = (props) => {
     const { isOpen, onToggle } = useDisclosure()
     const inputRef = React.useRef(null)
     const axios = require('axios')
+    const history = useNavigate()
 
 
     const setLogin = (event) => {
@@ -32,7 +34,7 @@ export const LoginForm = (props) => {
     }
 
     String.prototype.hashCode = function() {
-        var hash = 0, i, chr;
+        let hash = 0, i, chr;
         if (this.length === 0) return hash;
         for (i = 0; i < this.length; i++) {
             chr   = this.charCodeAt(i);
@@ -52,22 +54,11 @@ export const LoginForm = (props) => {
             pass
         };
 
-        // console.log(data, 'data')
 
         axios.post("http://localhost:9000/auth", data).then(response => {
-            // console.log(response)
-            // if (response.data.accessToken) {
-            //     localStorage.setItem('user', JSON.stringify(response.data));
-            //
-            // }
-            // <Navigate to="/patients/" />;
-            // TODO fix redirect
-            const url = "/patients" //+ response.data
-            console.log(url);
+            console.log(response.data);
             window.localStorage.setItem("doctorId", response.data)
-            // this.props.history.push(url)
-            return;
-
+            history('/patients')
         })
     }
     const onClickReveal = () => {
