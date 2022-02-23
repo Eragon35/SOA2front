@@ -10,76 +10,97 @@ import {
     useDisclosure
 } from '@chakra-ui/react'
 import * as React from 'react'
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {HiEye, HiEyeOff} from "react-icons/hi";
 import ReactRouterDOM from "react-dom";
 import { Navigate, Routes, Route  } from "react-router";
+import Select from "react-select";
+import axios from "axios";
+import AsyncSelect from "react-select/async";
 
 
 
-export const LoginForm = (props) => {
-    const [ username, setUserName ] = useState('');
-    const [ password, setPassword ] = useState('');
-    const { isOpen, onToggle } = useDisclosure()
-    const inputRef = React.useRef(null)
+export const PunishmentForm = (props) => {
+    // const [ username, setUserName ] = useState('');
+    // const [ password, setPassword ] = useState('');
+    // const { isOpen, onToggle } = useDisclosure()
+    // const inputRef = React.useRef(null)
     const axios = require('axios')
-    // const Redirect = ReactRouterDOM.Redirect;
+    const smokerId = parseInt(localStorage.getItem("smokerId"))
+    const [punishment, setPunishment] = useState('')
+    const [victim, setVictim] = useState(3)
+    const [cost1, setCost1] = useState('')
+    const relativesURL = "http://localhost:9000/relatives/?smokerId=" + localStorage.getItem("smokerId")
 
 
-    const setLogin = (event) => {
-        setUserName(event.target.value);
+    const setPunishmentType = (event) => {
+        setPunishment(event.target.value)
+    }
+    const setPunishmentVictim = (event) => {
+        setVictim(event.target.value)
+    }
+    const setPunishmentCost = (event) => {
+        setCost1(event.target.value)
     }
 
-    const setUserPassword = (event) => {
-        setPassword(event.target.value);
-    }
+    const [relativesData, setRelativesData] = useState([]);
 
-    String.prototype.hashCode = function() {
-        var hash = 0, i, chr;
-        if (this.length === 0) return hash;
-        for (i = 0; i < this.length; i++) {
-            chr   = this.charCodeAt(i);
-            hash  = ((hash << 5) - hash) + chr;
-            hash |= 0; // Convert to 32bit integer
+    const [loadingRelativesData, setLoadingRelativesData] = useState(true);
+
+
+    useEffect(() => {
+        async function getRelativesData() {
+            await axios
+                .get(relativesURL)
+                .then((response) => {
+                    // check if the data is populated
+                    console.log('Relatives', response.data);
+                    setRelativesOptions(response.data)
+                    setRelativesData(response.data)
+                    // you tell it that you had the result
+                    // setLoadingRelativesData(false)
+                });
         }
-        return hash;
-    };
+        if (loadingRelativesData) getRelativesData();
+    })
 
+    function setRelativesOptions(data) {
+        console.log('adding relatives')
+        data.forEach(x => {
+            relativesOptions.push({ value: String(x.personId), label: x.firstName + ' ' + x.lastName})
+            console.log(x.id,' ',relativesOptions)
+        })
+        setLoadingRelativesData(false)
+    }
 
 
     const signUpHandler = () => {
-        const login = username.toLowerCase()
-        const pass = password.hashCode().toString()
+        let cost = parseInt(cost1)
         const data = {
-            login,
-            pass
+            punishment,
+            smokerId,
+            victim,
+            cost
         };
 
-        // console.log(data, 'data')
-
+        console.log(data, 'data')
         axios.post("http://localhost:9000/punishment", data).then(response => {
             console.log(response)
-            // TODO: add record that request was send and refresh punishment table
             return;
 
         })
     }
-    const onClickReveal = () => {
-        onToggle()
-        const input = inputRef.current
 
-        if (input) {
-            input.focus({
-                preventScroll: true,
-            })
-            const length = input.value.length * 2
-            requestAnimationFrame(() => {
-                input.setSelectionRange(length, length)
-            })
-        }
+    let relativesOptions = [
+        { value: '1', label: 'Richard Morrison'},
+        { value: '3', label: 'Lucinda Morrison' },
+        { value: '4', label: 'Elvin Morrison' }
+    ]
+
+
+    const handleClick = () => {
+        setRelativesOptions(relativesData)
     }
-
-
 
     return (
         <chakra.form
@@ -89,32 +110,30 @@ export const LoginForm = (props) => {
             {...props}
         >
             <Stack spacing="6">
-                <FormControl id="email">
-                    <FormLabel>Наказание</FormLabel>
-                    <Input name="email" type="email" autoComplete="email" required  value={username} onChange={setLogin}/>
-                </FormControl>
-                <FormControl id="password">
-                    <Flex justify="space-between">
-                        <FormLabel>Password</FormLabel>
-                    </Flex>
-                    <InputGroup>
-                        <InputRightElement>
-                            <IconButton
-                                bg="transparent !important"
-                                variant="ghost"
-                                aria-label={isOpen ? 'Mask password' : 'Reveal password'}
-                                icon={isOpen ? <HiEyeOff /> : <HiEye />}
-                                onClick={onClickReveal}
-                            />
-                        </InputRightElement>
-                        <Input name="password" type={isOpen ? 'text' : 'password'} autoComplete="password" required  value={password} onChange={setUserPassword}/>
-                    </InputGroup>
+                <FormControl id="victimId">
+                    <FormLabel>Выбор жертвы</FormLabel>
+                    {/*<Input name="victimId" type="date" required  value={victimId} onChange={setPunishmentVictim}/>*/}
+                    <Select options={relativesOptions} value = 'Lucinda Morrison' />
                 </FormControl>
 
-                <Button type="submit" colorScheme="blue" size="lg" fontSize="md" onClick={signUpHandler}>
-                    Войти
+                <FormControl id="punishment">
+                    <FormLabel>Тип назания</FormLabel>
+                    <Input name="punishment" type="text" required  value={punishment} onChange={setPunishmentType}/>
+                </FormControl>
+
+                <FormControl id="hoursPerDay">
+                    <FormLabel>Стоимость наказания</FormLabel>
+                    <Input name="hoursPerDay" type="text" required  value={cost1} onChange={setPunishmentCost}/>
+                </FormControl>
+
+                <Button type="submit" colorScheme="blue" size="300px" fontSize="md" onClick={signUpHandler}>
+                    Назначить наказание
                 </Button>
             </Stack>
         </chakra.form>
+        // <div> {/*onClick={handleClick}*/}
+        //         <Select options={relativesOptions} onChange={setVictimId(this.value)}/>
+        //     {/*<AsyncSelect loadOptions={relativesOptions}/>*/}
+        // </div>
     )
 }

@@ -7,6 +7,7 @@ import Select from 'react-select'
 
 import {ObservationForm} from './ObservationForm'
 import {WeighingForm} from "./WeighingForm";
+import {PunishmentForm} from "./PunishmentForm";
 
 
 
@@ -188,10 +189,10 @@ export default function Smoker() {
                 .get(smokerURL)
                 .then((response) => {
                     // check if the data is populated
-                    console.log('Smoker', response.data);
+                    console.log('Smoker', response.data)
                     setSmokerData(response.data);
                     // you tell it that you had the result
-                    setLoadingSmokerData(false);
+                    setLoadingSmokerData(false)
                 });
         }
         async function getPunishmentsData() {
@@ -199,10 +200,10 @@ export default function Smoker() {
                 .get(punishmentsURL)
                 .then((response) => {
                     // check if the data is populated
-                    console.log('Punishments', response.data);
-                    setPunishmentsData(response.data);
+                    console.log('Punishments', response.data)
+                    setPunishmentsData(response.data)
                     // you tell it that you had the result
-                    setLoadingPunishmentsData(false);
+                    setLoadingPunishmentsData(false)
                 });
         }
         async function getRelativesData() {
@@ -211,10 +212,9 @@ export default function Smoker() {
                 .then((response) => {
                     // check if the data is populated
                     console.log('Relatives', response.data);
-                    setRelativesData(response.data);
-                    setRealativesOptions(response.data)
+                    setRelativesData(response.data)
                     // you tell it that you had the result
-                    setLoadingRelativesData(false);
+                    setLoadingRelativesData(false)
                 });
         }
         async function getObservationData() {
@@ -246,15 +246,11 @@ export default function Smoker() {
         if (loadingWeighingData) getWeighinhData();
     }, []);
 
-    const relativesOptions = [
+    let relativesOptions = [
         { value: 'chocolate', label: 'Chocolate' },
         { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
+        { value: '35', label: 'Eridan'}
     ]
-
-    function setRealativesOptions(data) {
-        data.forEach(x => relativesOptions.push(x.id, x.firstName + x.lastName))
-    }
 
 
 
@@ -283,22 +279,26 @@ export default function Smoker() {
                     </Styles>
                 )}
 
-                {loadingPunishmentsData ? (
-                    <p>Loading Punishments information please wait...</p>
-                ) : (
-                    <Styles>
-                        <Table columns={punishmentColumns} data={punishmentsData} />
-                        <Select options={relativesOptions} />
-                    </Styles>
-                )}
-
                 {loadingRelativesData ? (
                     <p>Loading Relatives information please wait...</p>
                 ) : (
                     <Styles>
                         <Table columns={relativesColumns} data={relativesData} />
                     </Styles>
+                )}
 
+                {loadingPunishmentsData ? (
+                    <p>Loading Punishments information please wait...</p>
+                ) : (
+                    <Styles>
+                        <Table columns={punishmentColumns} data={punishmentsData} />
+                        <PunishmentForm/>
+                        {/*{loadingRelativesData ? (*/}
+                        {/*    <p>Loading relatives list please wait...</p>*/}
+                        {/*) : (*/}
+                        {/*    <Select options={relativesOptions}/>*/}
+                        {/*)}*/}
+                    </Styles>
                 )}
 
                 {loadingWeighingData ? (
@@ -308,7 +308,6 @@ export default function Smoker() {
                         <Table columns={weighingColumns} data={weighingData} />
                         <WeighingForm/>
                     </Styles>
-
                 )}
             </div>
         </main>
