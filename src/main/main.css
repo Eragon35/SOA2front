@@ -1,0 +1,39 @@
+body {
+    /*background-image: url("./cpTrain.jpeg");*/
+    background-size: 100%;
+}
+
+div {
+    margin: 1px;
+    padding: 1px;
+    font-family: monospace;
+}
+
+button {
+    padding: 1px;
+    margin: 1px;
+    font-family: monospace;
+}
+
+label {
+    padding: 1px;
+    margin: 1px;
+}
+
+button{
+    font-size: 100%;
+    padding:5px 10px 5px 10px;
+    margin: 10px;
+    background-color: #282c34;
+    color: aqua;
+}
+
+h2 {
+color: red;
+}
+
+#response {
+    background-color: #282c34;
+    color: aqua;
+    font-family: monospace;
+}

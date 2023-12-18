@@ -7,18 +7,16 @@ import {
     Routes,
     Route
 } from "react-router-dom";
-import Auth from "./auth/auth"
-import Patients from "./patients/patients"
-import Smoker from "./smoker/smoker";
+import Main from "./main/main"
+import Apologize from "./apologize/apologize";
 
 const rootElement = document.getElementById("root");
 render(
     <BrowserRouter>
         <Routes>
-            <Route path="/" element={<Auth />} />
-            <Route path="auth" element={<Auth />} />
-            <Route path="patients" element={<Patients />} />
-            <Route path="patient" element={<Smoker />} />
+            <Route path="/" element={<Main />} />
+            <Route path="lab2" element={<Main />} />
+            <Route path="lab2/apologize" element={<Apologize />} />
         </Routes>
     </BrowserRouter>,
     rootElement
